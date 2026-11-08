@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorm — Catalogue</title>
+  <link rel="stylesheet" href="src/styles/global.css">
+</head>
+<body>
+<div id="navbar"></div>
+<div class="breadcrumb">
+  <a href="home.html">Home</a>
+  <span>/</span>
+  <span id="categoryName">Catalogue</span>
+</div>
+<div class="layout">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main-content">
+    <div class="filter-bar">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" style="margin-right:8px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search you want to read here" onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <select class="filter-select" id="filterLang"><option value="">Language — All</option><option>English</option><option>Hindi</option></select>
+      <select class="filter-select" id="filterFormat"><option value="">Format — All</option><option>Paperback</option><option>Hardcover</option><option>eBook</option></select>
+      <select class="filter-select" id="filterPrice"><option value="">Price Range</option><option value="0-200">Under ₹200</option><option value="200-400">₹200–₹400</option><option value="400-1000">Above ₹400</option></select>
+      <select class="filter-select" id="filterSort"><option value="">Sort by — Relevance</option><option value="price_asc">Price: Low to High</option><option value="price_desc">Price: High to Low</option></select>
+    </div>
+
+    <!-- Order History / Buy Again Section -->
+    <div id="orderHistorySection" style="display:none;">
+      <div class="section-heading" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Order History — Buy Again</span>
+        <button class="btn btn-sm btn-secondary" onclick="hideOrderHistory()">✕ Close</button>
+      </div>
+      <div class="book-grid" id="orderHistoryGrid"></div>
+    </div>
+
+    <div id="catalogSection">
+      <div class="section-heading" style="display:flex;align-items:center;justify-content:space-between;">
+        <span id="sectionTitle">All Books</span>
+        <button class="btn btn-sm btn-secondary" onclick="showOrderHistory()" id="orderHistoryBtn">
+          🕐 Order History &amp; Buy Again
+        </button>
+      </div>
+      <div class="book-grid" id="catalogGrid">
+        <p style="color:#888">Loading...</p>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>© 2025 BookWorm — An IBM Agentic IDE Demo Project</footer>
+
+<script src="src/pages/api.js"></script>
+<script>
+  document.getElementById('navbar').innerHTML = renderNavbar('');
+  Cart.updateBadge();
+
+  const params = new URLSearchParams(window.location.search);
+  const categorySlug = params.get('category') || 'all';
+  const categoryName = params.get('name') || 'All Books';
+  document.getElementById('categoryName').textContent = categoryName;
+  document.getElementById('sectionTitle').textContent = categoryName;
+
+  async function loadSidebar() {
+    let cats = MOCK_CATEGORIES;
+    try { cats = await API.getCategories(); } catch(e) {}
+    const sidebar = document.getElementById('sidebar');
+    sidebar.innerHTML = cats.map(c =>
+      `<div class="sidebar-item ${c.slug === categorySlug ? 'active' : ''}" onclick="window.location.href='catalog.html?category=${c.slug}&name=${encodeURIComponent(c.name)}'">
+        ${c.name}
+      </div>`
+    ).join('');
+  }
+
+  async function loadBooks() {
+    let books = MOCK_BOOKS;
+    try {
+      if (categorySlug === 'all') {
+        const res = await API.getBooks();
+        books = res.books || MOCK_BOOKS;
+      } else {
+        const cat = MOCK_CATEGORIES.find(c => c.slug === categorySlug);
+        if (cat) {
+          const res = await API.getBooksByCategory(cat.id);
+          books = res.books || MOCK_BOOKS.filter(() => Math.random() > 0.3);
+        }
+      }
+    } catch(e) {
+      books = MOCK_BOOKS;
+    }
+    renderBooks(books);
+  }
+
+  function renderBooks(books) {
+    const grid = document.getElementById('catalogGrid');
+    grid.innerHTML = books.length > 0
+      ? books.map(b => renderBookCard(b, `goBook(${b.id})`)).join('')
+      : '<p style="color:#888;padding:20px">No books found in this category.</p>';
+  }
+
+  async function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) { loadBooks(); return; }
+    let books = MOCK_BOOKS.filter(b =>
+      b.title.toLowerCase().includes(q.toLowerCase()) ||
+      b.author.toLowerCase().includes(q.toLowerCase())
+    );
+    try {
+      const res = await API.getBooks({ q });
+      books = res.books || books;
+    } catch(e) {}
+    renderBooks(books);
+  }
+
+  async function showOrderHistory() {
+    document.getElementById('orderHistorySection').style.display = 'block';
+    const grid = document.getElementById('orderHistoryGrid');
+    let orders = [];
+    try { orders = await API.getOrders(); } catch(e) {}
+
+    if (orders.length === 0) {
+      // Show demo order history
+      const pastBooks = MOCK_BOOKS.slice(0, 3);
+      grid.innerHTML = pastBooks.map(b => `
+        ${renderBookCard(b, `goBook(${b.id})`)}
+      `).join('').replace(/book-card/g, 'book-card').replace('</div>', `
+        <button class="btn btn-sm btn-primary" style="width:100%;margin-top:8px;justify-content:center;" onclick="Cart.add(${JSON.stringify(b).replace(/"/g,"'")});alert('Added to cart!')">
+          Buy Again
+        </button></div>`);
+      // Simpler approach:
+      grid.innerHTML = pastBooks.map(b => `
+        <div class="book-card">
+          <div class="book-cover" style="background:${b.cover_color}">${b.title}</div>
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">by ${b.author}</div>
+          <div class="book-price">₹${b.price}</div>
+          <div class="book-delivery">Delivery by ${b.delivery_date || 'Mon, 21 Jul'}</div>
+          <button class="btn btn-sm btn-primary" style="width:100%;margin-top:8px;justify-content:center;" onclick='buyAgain(${b.id})'>🔄 Buy Again</button>
+        </div>`).join('');
+      return;
+    }
+
+    const allItems = orders.flatMap(o => o.items || []);
+    grid.innerHTML = allItems.map(item => `
+      <div class="book-card">
+        <div class="book-cover" style="background:${item.cover_color || '#333'}">${item.title}</div>
+        <div class="book-title">${item.title}</div>
+        <div class="book-author">by ${item.author}</div>
+        <div class="book-price">₹${item.price}</div>
+        <button class="btn btn-sm btn-primary" style="width:100%;margin-top:8px;justify-content:center;" onclick="buyAgainById(${item.book_id})">🔄 Buy Again</button>
+      </div>`).join('');
+  }
+
+  function hideOrderHistory() {
+    document.getElementById('orderHistorySection').style.display = 'none';
+  }
+
+  function buyAgain(id) {
+    const book = MOCK_BOOKS.find(b => b.id === id);
+    if (book) { Cart.add(book); alert('Added to cart! 🛒'); }
+  }
+
+  async function buyAgainById(bookId) {
+    try { await API.addToCart(bookId); alert('Added to cart! 🛒'); }
+    catch(e) { buyAgain(bookId); }
+  }
+
+  loadSidebar();
+  loadBooks();
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorm — Home</title>
+  <link rel="stylesheet" href="src/styles/global.css">
+</head>
+<body>
+<div id="navbar"></div>
+<div class="layout">
+  <!-- Sidebar Categories -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" style="margin-right:8px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search you want to read here" onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <select class="filter-select" id="filterLang" onchange="doSearch()">
+        <option value="">Language — All</option>
+        <option value="English">English</option>
+        <option value="Hindi">Hindi</option>
+      </select>
+      <select class="filter-select" id="filterFormat" onchange="doSearch()">
+        <option value="">Format — All</option>
+        <option value="Paperback">Paperback</option>
+        <option value="Hardcover">Hardcover</option>
+        <option value="eBook">eBook</option>
+      </select>
+      <select class="filter-select" id="filterPrice" onchange="doSearch()">
+        <option value="">Price Range</option>
+        <option value="0-200">Under ₹200</option>
+        <option value="200-400">₹200 – ₹400</option>
+        <option value="400-1000">Above ₹400</option>
+      </select>
+      <select class="filter-select" id="filterSort" onchange="doSearch()">
+        <option value="relevance">Sort by — Relevance</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+
+    <!-- Search Results (hidden by default) -->
+    <div id="searchResults" style="display:none;">
+      <div class="section-heading">Search Results</div>
+      <div class="book-grid" id="searchGrid"></div>
+    </div>
+
+    <!-- Home Sections -->
+    <div id="homeSections">
+      <div class="section-heading">Recommended for You</div>
+      <div class="book-grid" id="recommendedGrid"></div>
+
+      <div class="section-heading">Bestsellers this Month</div>
+      <div class="book-grid" id="bestsellersGrid"></div>
+
+      <div class="section-heading">New Launches</div>
+      <div class="book-grid" id="newLaunchesGrid"></div>
+    </div>
+  </div>
+</div>
+<footer>© 2025 BookWorm — An IBM Agentic IDE Demo Project</footer>
+
+<script src="src/pages/api.js"></script>
+<script>
+  document.getElementById('navbar').innerHTML = renderNavbar('home');
+  Cart.updateBadge();
+
+  // Render sidebar
+  async function loadSidebar() {
+    let cats = MOCK_CATEGORIES;
+    try { cats = await API.getCategories(); } catch(e) {}
+    const sidebar = document.getElementById('sidebar');
+    sidebar.innerHTML = cats.map(c =>
+      `<div class="sidebar-item" onclick="filterByCategory('${c.slug}','${c.name}')">${c.name}</div>`
+    ).join('');
+  }
+
+  // Render book grids
+  async function loadHome() {
+    // Recommended
+    let recommended = MOCK_BOOKS.slice(0, 3);
+    try { recommended = await API.getRecommended(); } catch(e) {}
+    document.getElementById('recommendedGrid').innerHTML = recommended.map(b =>
+      renderBookCard(b, `goBook(${b.id})`)
+    ).join('');
+
+    // Bestsellers
+    let bestsellers = MOCK_BOOKS.filter(b => [4,5,6].includes(b.id));
+    try { bestsellers = await API.getBestsellers(); } catch(e) {}
+    document.getElementById('bestsellersGrid').innerHTML = bestsellers.map(b =>
+      renderBookCard(b, `goBook(${b.id})`)
+    ).join('');
+
+    // New Launches
+    let newLaunches = MOCK_BOOKS.filter(b => [7,8,9].includes(b.id));
+    try { newLaunches = await API.getNewLaunches(); } catch(e) {}
+    document.getElementById('newLaunchesGrid').innerHTML = newLaunches.map(b =>
+      renderBookCard(b, `goBook(${b.id})`)
+    ).join('');
+  }
+
+  function filterByCategory(slug, name) {
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+    if (slug === 'all') {
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById('homeSections').style.display = 'block';
+      return;
+    }
+    window.location.href = `catalog.html?category=${slug}&name=${encodeURIComponent(name)}`;
+  }
+
+  async function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    const lang = document.getElementById('filterLang').value;
+    const format = document.getElementById('filterFormat').value;
+    const priceRange = document.getElementById('filterPrice').value;
+    const sortBy = document.getElementById('filterSort').value;
+    if (!q && !lang && !format && !priceRange) {
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById('homeSections').style.display = 'block';
+      return;
+    }
+    const params = {};
+    if (q) params.q = q;
+    if (lang) params.language = lang;
+    if (format) params.format = format;
+    if (priceRange) { const [min, max] = priceRange.split('-'); params.minPrice = min; params.maxPrice = max; }
+    if (sortBy && sortBy !== 'relevance') params.sortBy = sortBy;
+
+    let books = MOCK_BOOKS;
+    try {
+      const res = await API.getBooks(params);
+      books = res.books || [];
+    } catch(e) {
+      // filter mock data
+      books = MOCK_BOOKS.filter(b => {
+        if (q && !b.title.toLowerCase().includes(q.toLowerCase()) && !b.author.toLowerCase().includes(q.toLowerCase())) return false;
+        if (format && b.format !== format) return false;
+        return true;
+      });
+    }
+    document.getElementById('searchResults').style.display = 'block';
+    document.getElementById('homeSections').style.display = 'none';
+    document.getElementById('searchGrid').innerHTML = books.length > 0
+      ? books.map(b => renderBookCard(b, `goBook(${b.id})`)).join('')
+      : '<p style="color:#888;padding:20px">No books found.</p>';
+  }
+
+  loadSidebar();
+  loadHome();
+</script>
+</body>
+</html>

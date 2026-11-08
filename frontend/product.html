@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorm — Product Detail</title>
+  <link rel="stylesheet" href="src/styles/global.css">
+</head>
+<body>
+<div id="navbar"></div>
+<div class="breadcrumb" id="breadcrumb">
+  <a href="home.html">Home</a> <span>/</span>
+  <a href="catalog.html">Non-Fiction</a> <span>/</span>
+  <span id="bcCategory">Self Help</span>
+</div>
+
+<div class="layout">
+  <div class="main-content" style="display:flex;gap:24px;">
+    <!-- Product + Reviews -->
+    <div style="flex:1;min-width:0;">
+      <!-- Product Detail -->
+      <div class="product-detail" id="productDetail">
+        <p style="color:#888">Loading...</p>
+      </div>
+
+      <!-- About the Writer -->
+      <div class="about-section" id="aboutSection" style="display:none;">
+        <div class="about-title">About the writer</div>
+        <div class="about-card">
+          <div class="about-avatar" id="authorAvatar">D</div>
+          <div>
+            <div class="about-name" id="authorName"></div>
+            <div class="about-text" id="authorBio"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="reviews-section">
+        <div class="about-title">Reviews</div>
+        <div class="review-form">
+          <div style="flex:1;">
+            <textarea class="review-textarea" id="reviewText" placeholder="Placeholder text" maxlength="100"></textarea>
+            <div class="star-rating" id="starRating" style="margin-top:8px;">
+              <span class="star" data-val="1">★</span>
+              <span class="star" data-val="2">★</span>
+              <span class="star" data-val="3">★</span>
+              <span class="star" data-val="4">★</span>
+              <span class="star" data-val="5">★</span>
+            </div>
+            <div id="charCount" style="font-size:11px;color:#555;margin-top:4px;">0/100</div>
+          </div>
+          <button class="btn btn-primary" onclick="submitReview()">Submit →</button>
+        </div>
+        <div id="reviewsList"></div>
+      </div>
+    </div>
+
+    <!-- Related Reads Sidebar -->
+    <div class="related-sidebar">
+      <div class="related-title">Related Reads</div>
+      <div id="relatedList"></div>
+    </div>
+  </div>
+</div>
+<footer>© 2025 BookWorm — An IBM Agentic IDE Demo Project</footer>
+
+<script src="src/pages/api.js"></script>
+<script>
+  document.getElementById('navbar').innerHTML = renderNavbar('');
+  Cart.updateBadge();
+
+  const params = new URLSearchParams(window.location.search);
+  const bookId = parseInt(params.get('id')) || 1;
+  let currentBook = null;
+  let selectedRating = 0;
+
+  // Star rating
+  const stars = document.querySelectorAll('.star');
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.val);
+      stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.val) <= selectedRating));
+    });
+  });
+
+  document.getElementById('reviewText').addEventListener('input', function() {
+    document.getElementById('charCount').textContent = this.value.length + '/100';
+  });
+
+  async function loadProduct() {
+    let book = MOCK_BOOKS.find(b => b.id === bookId) || MOCK_BOOKS[0];
+    try { book = await API.getBook(bookId); } catch(e) {}
+    currentBook = book;
+    document.title = `BookWorm — ${book.title}`;
+    document.getElementById('bcCategory').textContent = book.format || 'Books';
+
+    const starsHtml = '★'.repeat(Math.round(book.rating || 4)) + '☆'.repeat(5 - Math.round(book.rating || 4));
+    const tags = (book.tags || []).map(t => `<span class="book-tag" style="font-size:12px;">${t}</span>`).join('');
+
+    document.getElementById('productDetail').innerHTML = `
+      <div class="product-cover-big" style="background:${book.cover_color || '#333'}">${book.title}<br><br>${book.author}</div>
+      <div class="product-info">
+        <div class="product-title">${book.title}</div>
+        <div class="product-author">by <a href="#">${book.author}</a></div>
+        <div class="product-desc">${book.description || ''}</div>
+        <div style="margin-bottom:8px;color:#888;font-size:12px;">Published by: <a href="#" style="color:#4da6ff">${book.published_by || 'ABC Publishers'}</a></div>
+        <div style="margin-bottom:8px;">
+          <span class="book-tag">${book.format || 'Paperback'}</span>&nbsp;
+          ${tags}
+        </div>
+        <div class="product-price">₹${book.price}</div>
+        <div style="color:#888;font-size:12px;margin-bottom:12px;">Delivery by ${book.delivery_date || 'Mon, 21 Jul'}</div>
+        <div class="product-actions">
+          <button class="btn btn-primary" onclick="addToCart()">Add to Cart 🛒</button>
+          <button class="btn btn-secondary" onclick="addToWishlist()">Add to Wishlist ♡</button>
+        </div>
+        <div class="product-meta">
+          <div><span style="color:#888">⊕ Language</span><br><a href="#">${book.language || 'English'}</a></div>
+          <div><span style="color:#888">☆ Rating</span><br><span style="color:#ffd60a">${starsHtml}</span></div>
+          <div><span style="color:#888">$ Sells</span><br>${book.sells || 146} copies sold</div>
+        </div>
+        ${book.isbn ? `<div style="margin-top:12px;font-size:11px;color:#555">ISBN: ${book.isbn}</div>` : ''}
+      </div>
+    `;
+
+    // About author
+    if (book.about_author || book.author) {
+      document.getElementById('aboutSection').style.display = 'block';
+      document.getElementById('authorAvatar').textContent = book.author ? book.author[0] : 'A';
+      document.getElementById('authorName').textContent = book.author || '';
+      document.getElementById('authorBio').textContent = book.about_author ||
+        `${book.author} is a celebrated author known for insightful works that inspire and educate readers worldwide. Their writing combines deep research with accessible storytelling, making complex ideas approachable for everyone.`;
+    }
+
+    loadRelated();
+    loadReviews();
+  }
+
+  async function loadRelated() {
+    let related = MOCK_BOOKS.filter(b => b.id !== bookId).slice(0, 4);
+    try { related = await API.getRelated(bookId); } catch(e) {}
+    document.getElementById('relatedList').innerHTML = related.map(b => `
+      <div class="related-item" onclick="goBook(${b.id})">
+        <div class="related-cover" style="background:${b.cover_color || '#333'}">${b.title}</div>
+        <div>
+          <div class="related-book-title">${b.title}</div>
+          <div class="related-book-author">by <a href="#" onclick="event.stopPropagation()">${b.author}</a></div>
+          <div style="font-size:11px;color:#888;margin-bottom:4px;">${b.format || 'Paperback'}</div>
+          <div style="font-size:11px;color:#4da6ff;">${(b.tags || []).join(', ')}</div>
+          <div class="related-book-price">₹${b.price}</div>
+          <div style="font-size:10px;color:#888;">Delivery by ${b.delivery_date || 'Mon, 21 Jul'}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  async function loadReviews() {
+    let reviews = [
+      { user_name: 'John Smith', rating: 5, comment: 'The accordion component delivers large amounts of content in a small space through progressive disclosure. The user gets key details about the underlying content and can choose to expand that content within the constraints of the accordion.' }
+    ];
+    try { reviews = await API.getReviews(bookId); } catch(e) {}
+    document.getElementById('reviewsList').innerHTML = reviews.map(r => `
+      <div class="review-item">
+        <div class="review-user">${r.user_name || r.name || 'Anonymous'}
+          <span style="color:#ffd60a;margin-left:8px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+        </div>
+        <div class="review-comment">${r.comment}</div>
+      </div>`).join('') || '<p style="color:#888;font-size:13px;">No reviews yet. Be the first!</p>';
+  }
+
+  async function addToCart() {
+    if (!currentBook) return;
+    const btn = event.target;
+    try {
+      await API.addToCart(currentBook.id);
+      btn.textContent = 'Added! ✓';
+    } catch(e) {
+      Cart.add(currentBook);
+      btn.textContent = 'Added! ✓';
+    }
+    setTimeout(() => { btn.textContent = 'Add to Cart 🛒'; }, 1500);
+  }
+
+  function addToWishlist() {
+    alert(`"${currentBook?.title}" added to Wishlist ♡`);
+  }
+
+  async function submitReview() {
+    const comment = document.getElementById('reviewText').value.trim();
+    if (!comment) return alert('Please write a review first.');
+    if (!selectedRating) return alert('Please select a rating.');
+    try {
+      await API.addReview(bookId, { rating: selectedRating, comment });
+    } catch(e) {}
+    document.getElementById('reviewsList').insertAdjacentHTML('afterbegin', `
+      <div class="review-item">
+        <div class="review-user">You
+          <span style="color:#ffd60a;margin-left:8px;">${'★'.repeat(selectedRating)}${'☆'.repeat(5 - selectedRating)}</span>
+        </div>
+        <div class="review-comment">${comment}</div>
+      </div>`);
+    document.getElementById('reviewText').value = '';
+    document.getElementById('charCount').textContent = '0/100';
+    stars.forEach(s => s.classList.remove('active'));
+    selectedRating = 0;
+  }
+
+  loadProduct();
+</script>
+</body>
+</html>

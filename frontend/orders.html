@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorm — My Orders</title>
+  <link rel="stylesheet" href="src/styles/global.css">
+</head>
+<body>
+<div id="navbar"></div>
+<div class="breadcrumb">
+  <a href="home.html">Home</a> <span>/</span> <span>My Orders</span>
+</div>
+
+<div class="main-content" style="max-width:900px;margin:0 auto;">
+  <div style="font-size:16px;font-weight:700;margin-bottom:20px;">My Orders</div>
+  <div id="ordersList"><p style="color:#888;">Loading...</p></div>
+</div>
+<footer>© 2025 BookWorm — An IBM Agentic IDE Demo Project</footer>
+
+<script src="src/pages/api.js"></script>
+<script>
+  document.getElementById('navbar').innerHTML = renderNavbar('orders');
+  Cart.updateBadge();
+
+  async function loadOrders() {
+    let orders = [];
+    try { orders = await API.getOrders(); } catch(e) {}
+
+    const container = document.getElementById('ordersList');
+    if (orders.length === 0) {
+      container.innerHTML = `<div style="text-align:center;padding:60px;color:#888;">
+        <div style="font-size:40px;margin-bottom:16px;">📦</div>
+        <div style="font-size:15px;margin-bottom:8px;">No orders yet</div>
+        <a href="home.html" class="btn btn-primary" style="display:inline-flex;margin-top:12px;">Start Shopping</a>
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = orders.map(order => {
+      const statusClass = { paid: 'status-paid', pending: 'status-pending', cancelled: 'status-cancelled' }[order.status] || 'status-pending';
+      const items = order.items || [];
+      return `
+        <div class="order-card">
+          <div class="order-header">
+            <div>
+              <div class="order-id">Order #${order.id} — ${new Date(order.created_at).toLocaleDateString()}</div>
+              <div style="font-size:13px;color:#e0e0e0;margin-top:2px;">₹${order.total_price}</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="order-status ${statusClass}">${order.status.toUpperCase()}</span>
+              ${order.can_cancel ? `<button class="btn btn-sm btn-secondary" onclick="cancelOrder(${order.id})">Cancel Order</button>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            ${items.map(item => `
+              <div style="display:flex;gap:8px;align-items:center;background:#12121f;border-radius:6px;padding:10px;cursor:pointer;" onclick="goBook(${item.book_id || item.id})">
+                <div style="width:50px;height:65px;background:${item.cover_color || '#333'};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:#fff;text-align:center;padding:4px;text-transform:uppercase;">${item.title}</div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;">${item.title}</div>
+                  <div style="font-size:11px;color:#4da6ff;">${item.author}</div>
+                  <div style="font-size:12px;font-weight:700;">₹${item.price}</div>
+                  <button class="btn btn-sm btn-primary" style="margin-top:4px;" onclick="event.stopPropagation();buyAgain(${JSON.stringify(item).replace(/"/g,'&quot;')})">🔄 Buy Again</button>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function cancelOrder(id) {
+    if (!confirm('Are you sure you want to cancel this order?')) return;
+    try {
+      await API.cancelOrder(id);
+      alert('Order cancelled successfully.');
+      loadOrders();
+    } catch(e) {
+      alert(e.message || 'Could not cancel order.');
+    }
+  }
+
+  function buyAgain(item) {
+    Cart.add(item);
+    alert(`"${item.title}" added to cart! 🛒`);
+    Cart.updateBadge();
+  }
+
+  loadOrders();
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorm — Payment</title>
+  <link rel="stylesheet" href="src/styles/global.css">
+  <style>
+    /* Decorative floating books background */
+    .book-deco {
+      position: absolute;
+      border-radius: 6px;
+      opacity: 0.6;
+    }
+    .payment-tab-item { cursor: pointer; }
+    .payment-tab-item.active { background: #3b82f6; color: #fff; border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div id="navbar"></div>
+<div class="payment-page">
+  <!-- Decorative background -->
+  <div class="payment-bg-deco">
+    <div class="book-deco" style="width:120px;height:160px;background:#c1440e;top:60px;left:18%;transform:rotate(-15deg);"></div>
+    <div class="book-deco" style="width:80px;height:110px;background:#1a4a6e;top:30%;right:20%;"></div>
+    <div class="book-deco" style="width:100px;height:140px;background:#e85d04;bottom:100px;left:10%;transform:rotate(10deg);"></div>
+    <div class="book-deco" style="width:130px;height:90px;background:#f4a261;bottom:80px;right:15%;transform:rotate(-8deg);"></div>
+    <div style="position:absolute;top:45%;left:30%;width:120px;height:80px;background:#6b2d8b;border-radius:6px;opacity:0.4;transform:rotate(5deg);"></div>
+    <!-- Squiggle lines -->
+    <svg style="position:absolute;bottom:120px;left:22%;opacity:0.3;" width="200" height="60" viewBox="0 0 200 60">
+      <path d="M0 30 Q25 0 50 30 Q75 60 100 30 Q125 0 150 30 Q175 60 200 30" stroke="#c9a84c" stroke-width="3" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="payment-modal">
+    <div class="payment-header">
+      <h3>Complete Payment</h3>
+      <div class="payment-amount">Payable Amount: <span id="payableAmount">₹580</span></div>
+    </div>
+
+    <div class="payment-layout">
+      <!-- Payment method tabs -->
+      <div class="payment-sidebar-tabs">
+        <div class="payment-tab-item active" onclick="selectTab(this,'credit')">Credit Card</div>
+        <div class="payment-tab-item" onclick="selectTab(this,'debit')">Debit card</div>
+        <div class="payment-tab-item" onclick="selectTab(this,'upi')">UPI</div>
+        <div class="payment-tab-item" onclick="selectTab(this,'wallet')">Wallet</div>
+      </div>
+
+      <!-- Payment form area -->
+      <div class="payment-content-area">
+        <!-- Credit/Debit Card -->
+        <div id="card-form">
+          <div class="payment-field-label">Card Number</div>
+          <input class="payment-input" id="cardNumber" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19"
+            oninput="formatCard(this)">
+          <div class="payment-field-label">Name on Card</div>
+          <input class="payment-input" id="nameOnCard" placeholder="Name">
+          <div class="payment-row">
+            <div>
+              <div class="payment-field-label">CVV</div>
+              <input class="payment-input" id="cvv" placeholder="XXX" maxlength="3" type="password">
+            </div>
+            <div>
+              <div class="payment-field-label">Date of Expiry</div>
+              <input class="payment-input" id="expiryDate" placeholder="MM/YYYY" maxlength="7">
+            </div>
+          </div>
+        </div>
+
+        <!-- UPI -->
+        <div id="upi-form" style="display:none;">
+          <div class="payment-field-label">UPI ID</div>
+          <input class="payment-input" id="upiId" placeholder="yourname@upi">
+          <p style="color:#888;font-size:12px;margin-top:8px;">Enter your UPI ID and proceed to pay</p>
+        </div>
+
+        <!-- Wallet -->
+        <div id="wallet-form" style="display:none;">
+          <div style="color:#b0b8cc;font-size:13px;margin-bottom:12px;">Select Wallet</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;"><input type="radio" name="wallet" value="paytm"> Paytm</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;"><input type="radio" name="wallet" value="phonepe"> PhonePe</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;"><input type="radio" name="wallet" value="gpay"> Google Pay</label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;" onclick="processPayment()">
+          Pay Now 🔒
+        </button>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:8px;" onclick="window.location.href='checkout.html'">
+          ← Back to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer style="position:relative;z-index:2;">© 2025 BookWorm — An IBM Agentic IDE Demo Project</footer>
+
+<script src="src/pages/api.js"></script>
+<script>
+  document.getElementById('navbar').innerHTML = renderNavbar('');
+  Cart.updateBadge();
+
+  let currentMethod = 'credit_card';
+  const pendingOrder = JSON.parse(localStorage.getItem('bw_pending_order') || '{}');
+  if (pendingOrder.payableAmount) {
+    document.getElementById('payableAmount').textContent = '₹' + parseFloat(pendingOrder.payableAmount).toFixed(2);
+  }
+
+  function selectTab(el, type) {
+    document.querySelectorAll('.payment-tab-item').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('card-form').style.display = 'none';
+    document.getElementById('upi-form').style.display = 'none';
+    document.getElementById('wallet-form').style.display = 'none';
+    if (type === 'credit') { currentMethod = 'credit_card'; document.getElementById('card-form').style.display = 'block'; }
+    else if (type === 'debit') { currentMethod = 'debit_card'; document.getElementById('card-form').style.display = 'block'; }
+    else if (type === 'upi') { currentMethod = 'upi'; document.getElementById('upi-form').style.display = 'block'; }
+    else if (type === 'wallet') { currentMethod = 'wallet'; document.getElementById('wallet-form').style.display = 'block'; }
+  }
+
+  function formatCard(input) {
+    let val = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = val.replace(/(.{4})/g, '$1-').replace(/-$/, '');
+  }
+
+  async function processPayment() {
+    const btn = event.target;
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    try {
+      // Validate
+      if (currentMethod.includes('card')) {
+        const card = document.getElementById('cardNumber').value.replace(/-/g, '');
+        if (card.length < 16) { alert('Please enter a valid card number.'); btn.textContent = 'Pay Now 🔒'; btn.disabled = false; return; }
+      }
+
+      const payload = {
+        orderId: pendingOrder.orderId || 9999,
+        method: currentMethod,
+        cardNumber: document.getElementById('cardNumber')?.value,
+        nameOnCard: document.getElementById('nameOnCard')?.value,
+        cvv: document.getElementById('cvv')?.value,
+        expiryDate: document.getElementById('expiryDate')?.value,
+      };
+
+      let result;
+      try {
+        result = await API.payment(payload);
+        localStorage.setItem('bw_last_order', JSON.stringify(result));
+      } catch(e) {
+        // Demo mode
+        result = {
+          success: true,
+          orderId: pendingOrder.orderId || 9999,
+          transactionId: 'TXN' + Date.now(),
+          items: pendingOrder.items || Cart.get()
+        };
+        localStorage.setItem('bw_last_order', JSON.stringify(result));
+        // Clear cart
+        Cart.save([]);
+      }
+
+      if (result.success) {
+        window.location.href = 'confirmation.html';
+      } else {
+        alert('Payment failed. Please try again.');
+        btn.textContent = 'Pay Now 🔒';
+        btn.disabled = false;
+      }
+    } catch(err) {
+      alert('An error occurred. Please try again.');
+      btn.textContent = 'Pay Now 🔒';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

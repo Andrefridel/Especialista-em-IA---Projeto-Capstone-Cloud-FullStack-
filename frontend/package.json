@@ -1,0 +1,8 @@
+{
+  "name": "bookworm-frontend",
+  "version": "1.0.0",
+  "description": "BookWorm E-Bookstore Frontend",
+  "scripts": {
+    "start": "npx serve . -p 3000"
+  }
+}

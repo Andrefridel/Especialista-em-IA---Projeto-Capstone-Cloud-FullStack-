@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorm — Checkout</title>
+  <link rel="stylesheet" href="src/styles/global.css">
+</head>
+<body>
+<div id="navbar"></div>
+<div class="breadcrumb">
+  <a href="home.html">Home</a> <span>/</span>
+  <a href="catalog.html">Non-Fiction</a> <span>/</span>
+  <a href="catalog.html?category=self-help&name=Self+Help">Self Help</a> <span>/</span>
+  <span>Checkout</span>
+</div>
+
+<div class="main-content" style="max-width:1100px;margin:0 auto;">
+  <div style="font-size:16px;font-weight:700;margin-bottom:20px;">Shopping Cart</div>
+  <div class="checkout-layout">
+    <!-- Left: Items + Address -->
+    <div class="checkout-main">
+      <div id="cartItems"></div>
+
+      <!-- Address Form -->
+      <div class="address-form">
+        <div class="address-title">Address</div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="useSaved" onchange="toggleSavedAddress()">
+          Use Saved Address
+        </div>
+        <div id="addressFields">
+          <div class="form-row">
+            <div>
+              <div class="form-label">First Name</div>
+              <input class="form-input" id="firstName" placeholder="First Name">
+            </div>
+            <div>
+              <div class="form-label">Last Name</div>
+              <input class="form-input" id="lastName" placeholder="Last Name">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Address</div>
+            <input class="form-input" id="addressLine" placeholder="Address Line 2">
+          </div>
+          <div class="form-row">
+            <div>
+              <div class="form-label">e-mail</div>
+              <input class="form-input" id="addrEmail" type="email" placeholder="e-mail">
+            </div>
+            <div>
+              <div class="form-label">City</div>
+              <input class="form-input" id="city" placeholder="City">
+            </div>
+            <div>
+              <div class="form-label">Pin</div>
+              <input class="form-input" id="pin" placeholder="000000">
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <div class="form-label">Phone Number</div>
+              <div style="display:flex;gap:6px;">
+                <input class="form-input" style="width:70px;" value="+91" readonly>
+                <input class="form-input" id="phone" placeholder="12345 67890" style="flex:1;">
+              </div>
+            </div>
+            <div>
+              <div class="form-label">State</div>
+              <input class="form-input" id="state" placeholder="State">
+            </div>
+            <div>
+              <div class="form-label">Country</div>
+              <input class="form-input" id="country" value="India">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="checkout-sidebar">
+      <div class="order-summary">
+        <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Grand Total</div>
+        <div class="summary-row"><span>Price (<span id="itemCount">0</span> items)</span><span id="subtotalVal">₹0</span></div>
+        <div class="summary-row"><span>Tax (12%)</span><span id="taxVal">₹0</span></div>
+        <div class="summary-row"><span>Delivery Charges</span><span style="color:#4ade80;">Free</span></div>
+        <div class="coupon-row">
+          <input class="coupon-input" id="couponInput" placeholder="Apply Coupon">
+          <button class="btn btn-sm btn-primary" onclick="applyCoupon()">Apply</button>
+        </div>
+        <div class="summary-row"><span>Discount</span><span id="discountVal" style="color:#4ade80;">₹0</span></div>
+        <div class="summary-total"><span>Total Amount</span><span id="totalVal">₹0</span></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="proceedToPayment()">
+          Pay Now 🔒
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>© 2025 BookWorm — An IBM Agentic IDE Demo Project</footer>
+
+<script src="src/pages/api.js"></script>
+<script>
+  document.getElementById('navbar').innerHTML = renderNavbar('');
+  Cart.updateBadge();
+
+  let discount = 0;
+  let pendingOrderId = null;
+
+  function renderCartItems() {
+    const items = Cart.get();
+    const subtotal = Cart.total();
+    const tax = Math.round(subtotal * 0.12);
+    const total = subtotal + tax - discount;
+    document.getElementById('itemCount').textContent = items.length;
+    document.getElementById('subtotalVal').textContent = '₹' + subtotal.toFixed(2);
+    document.getElementById('taxVal').textContent = '₹' + tax.toFixed(2);
+    document.getElementById('discountVal').textContent = '−₹' + discount.toFixed(2);
+    document.getElementById('totalVal').textContent = '₹' + (total > 0 ? total : 0).toFixed(2);
+
+    const container = document.getElementById('cartItems');
+    if (items.length === 0) {
+      container.innerHTML = `<div style="text-align:center;padding:40px;color:#888;">
+        Your cart is empty. <a href="home.html">Continue Shopping</a>
+      </div>`;
+      return;
+    }
+    container.innerHTML = items.map(item => `
+      <div class="cart-item-card">
+        <div class="book-cover" style="background:${item.cover_color || '#333'};width:90px;min-width:90px;height:120px;font-size:10px;">${item.title}</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;margin-bottom:4px;">${item.title}</div>
+          <div style="font-size:12px;color:#4da6ff;margin-bottom:4px;">by <a href="#">${item.author}</a></div>
+          <div style="font-size:12px;color:#888;margin-bottom:6px;">${item.description || ''}</div>
+          <div style="font-size:12px;color:#888;margin-bottom:6px;">${item.format || 'Paperback'}</div>
+          <div style="font-size:12px;color:#4da6ff;margin-bottom:8px;">${(item.tags || []).join(', ')}</div>
+          <div style="font-size:18px;font-weight:700;">₹${item.price}</div>
+          <div style="font-size:12px;color:#888;">Delivery by ${item.delivery_date || 'Mon, 21 Jul'}</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(${item.id}, ${item.qty - 1})">−</button>
+            <span style="font-size:14px;">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id}, ${item.qty + 1})">+</button>
+            <button class="btn btn-sm btn-secondary" style="margin-left:12px;" onclick="removeItem(${item.id})">Remove</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function changeQty(id, qty) {
+    if (qty < 1) return;
+    Cart.updateQty(id, qty);
+    renderCartItems();
+  }
+
+  function removeItem(id) {
+    Cart.remove(id);
+    renderCartItems();
+  }
+
+  async function applyCoupon() {
+    const code = document.getElementById('couponInput').value.trim();
+    if (!code) return;
+    try {
+      const res = await API.applyCoupon(code);
+      discount = res.isPercent ? Cart.total() * res.discount / 100 : res.discount;
+      renderCartItems();
+      alert(`Coupon applied! Discount: ₹${discount.toFixed(2)}`);
+    } catch(e) {
+      // Demo coupon
+      if (code.toUpperCase() === 'SAVE100') {
+        discount = 100;
+        renderCartItems();
+        alert('Coupon applied! Discount: ₹100');
+      } else {
+        alert('Invalid coupon code.');
+      }
+    }
+  }
+
+  function toggleSavedAddress() {
+    const useSaved = document.getElementById('useSaved').checked;
+    document.getElementById('addressFields').style.opacity = useSaved ? '0.4' : '1';
+    document.getElementById('addressFields').style.pointerEvents = useSaved ? 'none' : 'auto';
+    if (useSaved) {
+      document.getElementById('firstName').value = 'John';
+      document.getElementById('lastName').value = 'Smith';
+      document.getElementById('addressLine').value = '123 Main St, Apt 4';
+      document.getElementById('city').value = 'Mumbai';
+      document.getElementById('pin').value = '400001';
+      document.getElementById('state').value = 'Maharashtra';
+      document.getElementById('country').value = 'India';
+    }
+  }
+
+  async function proceedToPayment() {
+    const items = Cart.get();
+    if (items.length === 0) return alert('Your cart is empty!');
+
+    const address = {
+      firstName: document.getElementById('firstName').value || 'Guest',
+      lastName: document.getElementById('lastName').value || 'User',
+      addressLine: document.getElementById('addressLine').value || 'N/A',
+      city: document.getElementById('city').value || 'Mumbai',
+      pin: document.getElementById('pin').value || '000000',
+      state: document.getElementById('state').value || 'Maharashtra',
+      country: document.getElementById('country').value || 'India',
+      phone: document.getElementById('phone').value || '9999999999',
+      email: document.getElementById('addrEmail').value || 'user@bookworm.com',
+    };
+
+    const subtotal = Cart.total();
+    const tax = Math.round(subtotal * 0.12);
+    const total = subtotal + tax - discount;
+
+    try {
+      const res = await API.checkout({ address, useSavedAddress: document.getElementById('useSaved').checked, couponCode: document.getElementById('couponInput').value || null });
+      pendingOrderId = res.orderId;
+      localStorage.setItem('bw_pending_order', JSON.stringify({ orderId: res.orderId, payableAmount: res.payableAmount, items: res.items }));
+    } catch(e) {
+      // Demo mode: store cart as pending order
+      localStorage.setItem('bw_pending_order', JSON.stringify({ orderId: 9999, payableAmount: total, items }));
+    }
+    window.location.href = 'payment.html';
+  }
+
+  renderCartItems();
+</script>
+</body>
+</html>

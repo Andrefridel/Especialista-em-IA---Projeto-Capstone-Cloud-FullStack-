@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  # ── PostgreSQL Database ──────────────────────────────────────────
+  db:
+    image: postgres:17-alpine
+    container_name: bookworm-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bookworm
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/config/db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Node.js Backend API ──────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookworm-api
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: bookworm
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: bookworm_secret_key_change_in_production
+      PORT: 3001
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Frontend (static) ────────────────────────────────────────────
+  frontend:
+    image: nginx:alpine
+    container_name: bookworm-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+volumes:
+  postgres_data:
