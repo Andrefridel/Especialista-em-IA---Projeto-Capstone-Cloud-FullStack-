@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
   const orderData = JSON.parse(localStorage.getItem('bw_last_order') || '{}');
   const pendingOrder = JSON.parse(localStorage.getItem('bw_pending_order') || '{}');
   const items = orderData.items || pendingOrder.items || [];
-
+  // teste
   // Clear pending order
   localStorage.removeItem('bw_pending_order');
   // Clear cart
