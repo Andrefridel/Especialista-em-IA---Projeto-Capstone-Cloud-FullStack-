@@ -4,204 +4,87 @@
 <meta charset="UTF-8">
 <title>BookWorm — Apresentação 3 Minutos</title>
 <style>
-  @page { margin: 18mm 20mm; }
-
+  @page { margin: 15mm 18mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #fff;
-    color: #1a1a1a;
-    font-size: 13px;
-    line-height: 1.65;
-  }
-
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #fff; color: #1a1a1a; font-size: 13px; line-height: 1.65; }
   .page { max-width: 720px; margin: 0 auto; padding: 32px 28px; }
 
-  /* ── CAPA ───────────────────────────────────────── */
-  .capa {
-    background: #1a1a2e;
-    color: #fff;
-    border-radius: 10px;
-    padding: 32px 30px 28px;
-    margin-bottom: 28px;
-    page-break-inside: avoid;
-  }
-  .capa-logo { font-size: 32px; margin-bottom: 6px; }
-  .capa-title { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 4px; }
-  .capa-sub { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
-  .capa-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 20px;
-    padding: 3px 12px;
-    font-size: 11px;
-    color: #e2e8f0;
-  }
+  /* CAPA */
+  .capa { background: #1a1a2e; color: #fff; border-radius: 10px; padding: 28px 28px 24px; margin-bottom: 24px; }
+  .capa-logo { font-size: 30px; margin-bottom: 4px; }
+  .capa-title { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+  .capa-sub { font-size: 11px; color: #94a3b8; margin-bottom: 18px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 3px 11px; font-size: 10px; color: #e2e8f0; }
 
-  /* ── TIMELINE ───────────────────────────────────── */
-  .timeline {
-    display: flex;
-    gap: 0;
-    margin-bottom: 28px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .tl-item { flex: 1; padding: 10px 12px; text-align: center; background: #f8fafc; }
-  .tl-item:not(:last-child) { border-right: 1px solid #e2e8f0; }
-  .tl-time { font-size: 14px; font-weight: 800; color: #1a1a2e; }
-  .tl-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+  /* TIMELINE */
+  .timeline { display: flex; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  .tl { flex: 1; padding: 10px 8px; text-align: center; background: #f8fafc; border-right: 1px solid #e2e8f0; }
+  .tl:last-child { border-right: none; }
+  .tl-t { font-size: 15px; font-weight: 900; color: #1a1a2e; }
+  .tl-l { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; }
 
-  /* ── BLOCOS ─────────────────────────────────────── */
-  .bloco {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    page-break-inside: avoid;
-    overflow: hidden;
-  }
-  .bloco-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  .bloco-tempo {
-    background: #1a1a2e;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 3px 10px;
-    border-radius: 12px;
-    white-space: nowrap;
-  }
-  .bloco-titulo { font-size: 14px; font-weight: 800; color: #1a1a2e; }
-  .bloco-body { padding: 16px 18px; }
+  /* BLOCOS */
+  .bloco { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 18px; overflow: hidden; page-break-inside: avoid; }
+  .bloco-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+  .tempo { background: #1a1a2e; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+  .bloco-titulo { font-size: 13px; font-weight: 800; }
+  .bloco-body { padding: 14px 16px; }
 
-  /* ── FALA ───────────────────────────────────────── */
-  .fala {
-    font-size: 13px;
-    line-height: 1.85;
-    color: #1a1a1a;
-    background: #f0f9ff;
-    border-left: 4px solid #3b82f6;
-    border-radius: 0 6px 6px 0;
-    padding: 12px 16px;
-    margin-bottom: 12px;
-  }
+  /* FALA */
+  .fala { background: #f0f9ff; border-left: 3px solid #3b82f6; border-radius: 0 6px 6px 0; padding: 12px 14px; font-size: 13px; line-height: 1.85; margin-bottom: 10px; }
   .fala strong { font-weight: 800; }
   .fala em { color: #1d4ed8; font-style: normal; font-weight: 700; }
 
-  /* ── DICA ───────────────────────────────────────── */
-  .dica {
-    background: #fefce8;
-    border: 1px solid #fde047;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 11px;
-    color: #713f12;
-    margin-top: 8px;
-  }
+  /* DICA */
+  .dica { background: #fefce8; border: 1px solid #fde047; border-radius: 6px; padding: 7px 12px; font-size: 11px; color: #713f12; margin-top: 8px; }
 
-  /* ── STEPS ──────────────────────────────────────── */
-  .steps { list-style: none; padding: 0; }
-  .steps li {
-    display: flex;
-    gap: 10px;
-    padding: 7px 0;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 12.5px;
-    align-items: flex-start;
-  }
+  /* STEPS */
+  .steps { list-style: none; }
+  .steps li { display: flex; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; align-items: flex-start; }
   .steps li:last-child { border-bottom: none; }
-  .step-bullet {
-    width: 20px; min-width: 20px; height: 20px;
-    background: #1a1a2e; color: #fff;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 800;
-    margin-top: 2px;
-  }
-  .step-txt strong { font-weight: 700; }
-  .step-acao { color: #3b82f6; font-style: italic; font-size: 11px; }
+  .snum { width: 20px; min-width: 20px; height: 20px; background: #1a1a2e; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; margin-top: 2px; }
+  .sacao { color: #3b82f6; font-style: italic; font-size: 11px; }
 
-  /* ── TECH GRID ──────────────────────────────────── */
-  .tech-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .tech-item {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 8px 10px;
-  }
-  .tech-layer { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-  .tech-name { font-size: 12px; font-weight: 700; }
+  /* TECH GRID */
+  .tech-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-top: 10px; }
+  .tech-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; }
+  .tech-layer { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; }
+  .tech-name { font-size: 11px; font-weight: 700; }
 
-  /* ── ENTREGAS ───────────────────────────────────── */
-  .entregas {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .entrega-item {
-    display: flex; gap: 6px; align-items: flex-start;
-    font-size: 12px; padding: 5px 0;
-    border-bottom: 1px solid #f1f5f9;
-  }
-  .entrega-item::before { content: "✓"; color: #16a34a; font-weight: 800; flex-shrink: 0; }
+  /* FRASE FINAL */
+  .frase { background: #1a1a2e; color: #fff; border-radius: 8px; padding: 18px; text-align: center; font-size: 14px; font-weight: 700; line-height: 1.7; margin-bottom: 18px; }
+  .frase span { color: #60a5fa; }
 
-  /* ── FRASE FINAL ────────────────────────────────── */
-  .frase-final {
-    background: #1a1a2e;
-    color: #fff;
-    border-radius: 8px;
-    padding: 20px 22px;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.7;
-    margin-bottom: 20px;
-    page-break-inside: avoid;
-  }
-  .frase-final span { color: #60a5fa; }
-
-  /* ── TABELA JOURNEYS ────────────────────────────── */
+  /* TABELAS */
   table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
-  th {
-    text-align: left; padding: 7px 10px;
-    background: #f8fafc; font-size: 10px;
-    text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;
-    border-bottom: 2px solid #e2e8f0;
-  }
-  td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; }
-  td:first-child { font-weight: 800; color: #3b82f6; width: 28px; }
+  th { text-align: left; padding: 7px 9px; background: #f8fafc; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 7px 9px; border-bottom: 1px solid #f1f5f9; }
+  td:first-child { font-weight: 800; color: #3b82f6; width: 24px; }
   td:last-child { color: #64748b; font-family: 'Consolas', monospace; font-size: 10.5px; }
 
-  /* ── RODAPÉ ─────────────────────────────────────── */
-  footer {
-    border-top: 1px solid #e2e8f0;
-    margin-top: 28px;
-    padding-top: 10px;
-    text-align: center;
-    font-size: 10px;
-    color: #94a3b8;
-  }
+  /* ENTREGAS */
+  .entregas { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .e-item { display: flex; gap: 5px; font-size: 11.5px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+  .e-item::before { content: "✓"; color: #16a34a; font-weight: 800; }
 
-  /* ── PRINT ──────────────────────────────────────── */
+  /* TESTES */
+  .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .test-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+  .test-cat { font-size: 10px; font-weight: 700; color: #3b82f6; text-transform: uppercase; margin-bottom: 3px; }
+  .test-count { font-size: 18px; font-weight: 900; color: #1a1a2e; }
+  .test-desc { font-size: 10px; color: #64748b; }
+  .test-badge { display: inline-block; background: #eff6ff; color: #1d4ed8; font-size: 9px; padding: 1px 6px; border-radius: 8px; margin: 1px; font-weight: 600; }
+
+  /* URL BOX */
+  .url-box { background: #0d1117; color: #3fb950; border-radius: 6px; padding: 10px 14px; font-family: 'Consolas', monospace; font-size: 12px; margin: 8px 0; }
+
+  footer { border-top: 1px solid #e2e8f0; margin-top: 24px; padding-top: 10px; text-align: center; font-size: 10px; color: #94a3b8; }
+
   @media print {
+    .bloco { page-break-inside: avoid; }
     body { font-size: 12px; }
     .page { padding: 0; }
-    .bloco { page-break-inside: avoid; }
-    .no-break { page-break-inside: avoid; }
   }
 </style>
 </head>
@@ -212,32 +95,40 @@
   <div class="capa">
     <div class="capa-logo">📚</div>
     <div class="capa-title">BookWorm E-Bookstore Platform</div>
-    <div class="capa-sub">IBM Agentic IDE Demo · Roteiro de Apresentação · 3 Minutos</div>
-    <div class="capa-chips">
+    <div class="capa-sub">IBM Agentic IDE Demo · Roteiro de Apresentação · 3 Minutos · Capstone Cloud FullStack</div>
+    <div class="chips">
       <span class="chip">Node.js + Express</span>
       <span class="chip">PostgreSQL</span>
       <span class="chip">OpenAPI 3.0</span>
       <span class="chip">JWT Auth</span>
       <span class="chip">HTML5 + CSS3 + JS</span>
+      <span class="chip">Docker</span>
       <span class="chip">IBM BOB</span>
     </div>
   </div>
 
   <!-- TIMELINE -->
   <div class="timeline">
-    <div class="tl-item"><div class="tl-time">0:00</div><div class="tl-label">Introdução</div></div>
-    <div class="tl-item"><div class="tl-time">0:45</div><div class="tl-label">Demo ao Vivo</div></div>
-    <div class="tl-item"><div class="tl-time">2:00</div><div class="tl-label">Tecnologia</div></div>
-    <div class="tl-item"><div class="tl-time">2:45</div><div class="tl-label">Encerramento</div></div>
-    <div class="tl-item"><div class="tl-time">3:00</div><div class="tl-label">Fim</div></div>
+    <div class="tl"><div class="tl-t">0:00</div><div class="tl-l">Introdução</div></div>
+    <div class="tl"><div class="tl-t">0:45</div><div class="tl-l">Demo ao Vivo</div></div>
+    <div class="tl"><div class="tl-t">2:00</div><div class="tl-l">Tecnologia</div></div>
+    <div class="tl"><div class="tl-t">2:45</div><div class="tl-l">Encerramento</div></div>
+    <div class="tl"><div class="tl-t">3:00</div><div class="tl-l">Fim</div></div>
   </div>
 
-  <!-- BLOCO 1 — INTRODUÇÃO -->
+  <!-- ANTES DE COMEÇAR -->
   <div class="bloco">
-    <div class="bloco-header">
-      <div class="bloco-tempo">0:00 – 0:45</div>
-      <div class="bloco-titulo">① Introdução — O que foi construído</div>
+    <div class="bloco-header"><div class="tempo">ANTES DE COMEÇAR</div><div class="bloco-titulo">Abra no navegador</div></div>
+    <div class="bloco-body">
+      <div class="url-box">Aba 1 → http://localhost:3000/index.html &nbsp;&nbsp; ← Frontend
+Aba 2 → http://localhost:3001/api-docs &nbsp;&nbsp;&nbsp;&nbsp; ← Swagger API</div>
+      <div class="dica">💡 Docker deve estar rodando: <code>sudo docker compose up</code> no terminal Ubuntu</div>
     </div>
+  </div>
+
+  <!-- BLOCO 1 -->
+  <div class="bloco">
+    <div class="bloco-header"><div class="tempo">0:00 – 0:45</div><div class="bloco-titulo">① Introdução — O que foi construído</div></div>
     <div class="bloco-body">
       <div class="fala">
         "O projeto que desenvolvi se chama <strong>BookWorm</strong> — uma <em>plataforma completa de e-commerce para compra de livros</em>, construída do zero seguindo exatamente o Use Case apresentado nos slides da atividade.
@@ -246,157 +137,127 @@
         <br><br>
         Todo o desenvolvimento foi feito com o apoio do <strong>IBM BOB como Agentic IDE</strong> — o agente gerou o código do backend, o schema do banco de dados, a especificação OpenAPI e todas as telas do frontend."
       </div>
-      <div class="dica">💡 <strong>Antes de começar:</strong> abra o navegador com o arquivo <code>frontend/index.html</code> já carregado.</div>
     </div>
   </div>
 
-  <!-- BLOCO 2 — DEMO -->
+  <!-- BLOCO 2 -->
   <div class="bloco">
-    <div class="bloco-header">
-      <div class="bloco-tempo">0:45 – 2:00</div>
-      <div class="bloco-titulo">② Demo ao Vivo — Fluxo completo (7 telas)</div>
-    </div>
+    <div class="bloco-header"><div class="tempo">0:45 – 2:00</div><div class="bloco-titulo">② Demo ao Vivo — Fluxo completo (7 telas)</div></div>
     <div class="bloco-body">
-      <p style="margin-bottom:10px;font-size:12.5px;color:#475569;">"Vou mostrar o fluxo completo na prática:"</p>
+      <p style="font-size:12px;color:#475569;margin-bottom:8px;">"Vou mostrar o fluxo completo na prática:"</p>
       <ul class="steps">
-        <li>
-          <div class="step-bullet">1</div>
-          <div class="step-txt"><strong>Login</strong> — "Temos a tela de autenticação. O usuário pode criar conta, fazer login ou entrar como Guest."
-          <br><span class="step-acao">→ Clique em "Continue as Guest"</span></div>
-        </li>
-        <li>
-          <div class="step-bullet">2</div>
-          <div class="step-txt"><strong>Home Page</strong> — "Na página inicial há três seções: <strong>Recommended for You</strong>, <strong>Bestsellers do mês</strong> e <strong>New Launches</strong>. À esquerda, o menu com 20 categorias de livros."
-          <br><span class="step-acao">→ Mostrar a sidebar e as seções</span></div>
-        </li>
-        <li>
-          <div class="step-bullet">3</div>
-          <div class="step-txt"><strong>Catálogo</strong> — "No catálogo, o usuário filtra por categoria, formato, preço e idioma. Tem também o botão <strong>Order History &amp; Buy Again</strong> para recomprar com um clique."
-          <br><span class="step-acao">→ Clicar em "Self-help" na sidebar</span></div>
-        </li>
-        <li>
-          <div class="step-bullet">4</div>
-          <div class="step-txt"><strong>Produto</strong> — "O detalhe do livro traz descrição, informações do autor, avaliações com estrelas e uma coluna de <strong>Related Reads</strong> com sugestões relacionadas."
-          <br><span class="step-acao">→ Clicar em "Joy of Minimalism" → Add to Cart</span></div>
-        </li>
-        <li>
-          <div class="step-bullet">5</div>
-          <div class="step-txt"><strong>Checkout</strong> — "No carrinho, o usuário ajusta quantidades, preenche o endereço, aplica cupom de desconto e vê o total com imposto calculado automaticamente."
-          <br><span class="step-acao">→ Digitar "SAVE100" → Apply → Pay Now</span></div>
-        </li>
-        <li>
-          <div class="step-bullet">6</div>
-          <div class="step-txt"><strong>Pagamento</strong> — "Quatro métodos disponíveis: <strong>Credit Card, Debit Card, UPI e Wallet</strong>."
-          <br><span class="step-acao">→ Preencher número do cartão → Pay Now</span></div>
-        </li>
-        <li>
-          <div class="step-bullet">7</div>
-          <div class="step-txt"><strong>Confirmação</strong> — "A tela de sucesso exibe os livros comprados e acumula <strong>gift points</strong> automaticamente para o usuário."</div>
-        </li>
+        <li><div class="snum">1</div><div><strong>Login</strong> — "Tela de autenticação. O usuário pode criar conta, fazer login ou entrar como Guest."<br><span class="sacao">→ http://localhost:3000/index.html → clicar "Continue as Guest"</span></div></li>
+        <li><div class="snum">2</div><div><strong>Home Page</strong> — "Três seções: <strong>Recommended for You</strong>, <strong>Bestsellers do mês</strong> e <strong>New Launches</strong>. À esquerda, menu com 20 categorias."<br><span class="sacao">→ http://localhost:3000/home.html → mostrar sidebar e seções</span></div></li>
+        <li><div class="snum">3</div><div><strong>Catálogo</strong> — "Filtra por categoria, formato, preço. Botão <strong>Order History &amp; Buy Again</strong> para recomprar."<br><span class="sacao">→ http://localhost:3000/catalog.html?category=self-help&name=Self-help</span></div></li>
+        <li><div class="snum">4</div><div><strong>Produto</strong> — "Detalhe do livro: autor, avaliações com estrelas, coluna <strong>Related Reads</strong>."<br><span class="sacao">→ http://localhost:3000/product.html?id=7 → Add to Cart</span></div></li>
+        <li><div class="snum">5</div><div><strong>Checkout</strong> — "Carrinho com quantidades +/−, endereço de entrega, cupom de desconto, Grand Total com imposto."<br><span class="sacao">→ http://localhost:3000/checkout.html → digitar SAVE100 → Apply → Pay Now</span></div></li>
+        <li><div class="snum">6</div><div><strong>Pagamento</strong> — "Quatro métodos: <strong>Credit Card, Debit Card, UPI e Wallet</strong>."<br><span class="sacao">→ http://localhost:3000/payment.html → preencher cartão → Pay Now</span></div></li>
+        <li><div class="snum">7</div><div><strong>Confirmação</strong> — "Tela de sucesso ✓ com livros comprados e <strong>gift points</strong> acumulados."<br><span class="sacao">→ http://localhost:3000/confirmation.html</span></div></li>
       </ul>
-      <div class="dica">💡 <strong>Se travar:</strong> "O sistema tem modo demo offline — funciona sem o backend, usando dados internos."</div>
+      <div class="dica">💡 <strong>Se travar:</strong> "O sistema tem modo demo offline — funciona sem o backend usando dados internos."</div>
     </div>
   </div>
 
-  <!-- BLOCO 3 — TECNOLOGIA -->
+  <!-- BLOCO 3 -->
   <div class="bloco">
-    <div class="bloco-header">
-      <div class="bloco-tempo">2:00 – 2:45</div>
-      <div class="bloco-titulo">③ Tecnologia — Como foi construído</div>
-    </div>
+    <div class="bloco-header"><div class="tempo">2:00 – 2:45</div><div class="bloco-titulo">③ Tecnologia — Como foi construído</div></div>
     <div class="bloco-body">
       <div class="fala">
-        "O sistema é composto por <strong>três camadas</strong>:
-        <br><br>
-        O <em>frontend</em> foi construído em <strong>HTML5, CSS3 e JavaScript puro</strong> — sem frameworks, acessível direto no navegador.
-        <br><br>
-        O <em>backend</em> é uma <strong>API REST em Node.js + Express</strong> com <strong>19 endpoints</strong> documentados em OpenAPI 3.0, navegáveis pelo Swagger em <code>localhost:3001/api-docs</code>.
-        <br><br>
-        O <em>banco de dados</em> é <strong>PostgreSQL</strong> com 11 tabelas — usuários, livros, categorias, carrinho, pedidos, reviews, endereços e cupons.
-        <br><br>
-        A autenticação usa <strong>JWT</strong>. O código foi gerado com o <strong>IBM BOB</strong> seguindo os 9 steps do workflow dos slides."
+        "O sistema tem <strong>três camadas</strong>: o <em>frontend</em> em HTML5, CSS3 e JavaScript puro. O <em>backend</em> é uma <strong>API REST em Node.js + Express com 19 endpoints</strong> documentados em OpenAPI 3.0 — visíveis no Swagger em <code>localhost:3001/api-docs</code>. O <em>banco</em> é <strong>PostgreSQL com 11 tabelas</strong>. Auth via <strong>JWT</strong>. Tudo rodando em <strong>Docker</strong>. Código gerado com <strong>IBM BOB</strong> seguindo os 9 steps do workflow."
       </div>
       <div class="tech-grid">
         <div class="tech-item"><div class="tech-layer">Frontend</div><div class="tech-name">HTML5 + CSS3 + JS</div></div>
         <div class="tech-item"><div class="tech-layer">Backend</div><div class="tech-name">Node.js + Express</div></div>
-        <div class="tech-item"><div class="tech-layer">Database</div><div class="tech-name">PostgreSQL 15</div></div>
+        <div class="tech-item"><div class="tech-layer">Database</div><div class="tech-name">PostgreSQL 17</div></div>
         <div class="tech-item"><div class="tech-layer">API Spec</div><div class="tech-name">OpenAPI 3.0</div></div>
-        <div class="tech-item"><div class="tech-layer">Autenticação</div><div class="tech-name">JWT + bcryptjs</div></div>
+        <div class="tech-item"><div class="tech-layer">Deploy</div><div class="tech-name">Docker Compose</div></div>
         <div class="tech-item"><div class="tech-layer">Agentic IDE</div><div class="tech-name">IBM BOB</div></div>
       </div>
     </div>
   </div>
 
-  <!-- BLOCO 4 — ENCERRAMENTO -->
+  <!-- BLOCO 4 -->
   <div class="bloco">
-    <div class="bloco-header">
-      <div class="bloco-tempo">2:45 – 3:00</div>
-      <div class="bloco-titulo">④ Encerramento</div>
-    </div>
+    <div class="bloco-header"><div class="tempo">2:45 – 3:00</div><div class="bloco-titulo">④ Encerramento</div></div>
     <div class="bloco-body">
       <div class="fala">
-        "O BookWorm cobre os <strong>12 customer journeys</strong> definidos no Use Case — da autenticação até a confirmação de compra com regra de cancelamento em 48 horas.
-        <br><br>
-        O projeto está organizado para push no <strong>GitHub</strong> e pronto para deploy local ou na cloud — <strong>AWS ROSA ou IBM ROKS</strong>.
-        <br><br>
-        Esse projeto demonstra na prática como um <em>Agentic IDE como o IBM BOB</em> acelera o desenvolvimento full-stack de forma estruturada — do wireframe ao código pronto."
+        "O BookWorm cobre os <strong>11 customer journeys</strong> do Use Case — da autenticação até a confirmação com cancelamento em 48 horas. Possui <strong>37 test cases gerados com o ICA Agent</strong>. O projeto está no <strong>GitHub com Pull Request aberto</strong> e rodando localmente via <strong>Docker</strong> — pronto para deploy no IBM ROKS ou AWS ROSA. Desenvolvido integralmente com o <strong>IBM BOB como Agentic IDE</strong>."
       </div>
     </div>
   </div>
 
   <!-- FRASE FINAL -->
-  <div class="frase-final">
+  <div class="frase">
     "Do wireframe ao sistema funcionando —<br>
-    <span>frontend + backend + banco de dados</span><br>
+    <span>frontend + backend + banco de dados + testes</span><br>
     construído com IBM BOB como Agentic IDE."
   </div>
 
-  <!-- CUSTOMER JOURNEYS -->
-  <div class="bloco no-break">
-    <div class="bloco-header">
-      <div class="bloco-titulo" style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#64748b;">12 Customer Journeys Cobertos</div>
-    </div>
-    <div class="bloco-body" style="padding:12px 16px;">
-      <table>
-        <tr><th>#</th><th>Journey Step</th><th>Página</th></tr>
-        <tr><td>1</td><td>Login + User Authentication</td><td>index.html</td></tr>
-        <tr><td>2</td><td>Order History + Buy Again + Recommendations</td><td>catalog.html</td></tr>
-        <tr><td>3</td><td>Access Product Catalogue per category</td><td>catalog.html</td></tr>
-        <tr><td>5</td><td>Select Category of products</td><td>home.html (sidebar)</td></tr>
-        <tr><td>6</td><td>Browse the brands / authors</td><td>catalog.html (filtro)</td></tr>
-        <tr><td>7</td><td>Select product + Related products</td><td>product.html</td></tr>
-        <tr><td>8</td><td>Add product(s) to basket</td><td>product.html → checkout.html</td></tr>
-        <tr><td>9</td><td>Select address for delivery</td><td>checkout.html</td></tr>
-        <tr><td>10</td><td>Initiate payment + Redeem gift points</td><td>checkout.html</td></tr>
-        <tr><td>11</td><td>Payment (Credit / Debit / UPI / Wallet)</td><td>payment.html</td></tr>
-        <tr><td>12</td><td>Purchase confirmation + Cancel within 48h</td><td>confirmation.html</td></tr>
-      </table>
-    </div>
-  </div>
-
-  <!-- O QUE FOI ENTREGUE -->
-  <div class="bloco no-break">
-    <div class="bloco-header">
-      <div class="bloco-titulo" style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#64748b;">📦 O que foi entregue</div>
-    </div>
-    <div class="bloco-body" style="padding:12px 16px;">
-      <div class="entregas">
-        <div class="entrega-item">8 páginas HTML completas</div>
-        <div class="entrega-item">19 endpoints REST documentados</div>
-        <div class="entrega-item">11 tabelas PostgreSQL + seed data</div>
-        <div class="entrega-item">OpenAPI 3.0 spec (swagger.yaml)</div>
-        <div class="entrega-item">JWT Authentication + bcrypt</div>
-        <div class="entrega-item">Modo demo offline (localStorage)</div>
-        <div class="entrega-item">Gift Points automáticos por compra</div>
-        <div class="entrega-item">Cancel Order — regra de 48 horas</div>
-        <div class="entrega-item">Cupons de desconto (SAVE100)</div>
-        <div class="entrega-item">README completo + Git workflow</div>
+  <!-- TESTES -->
+  <div class="bloco">
+    <div class="bloco-header"><div class="tempo">ICA AGENT</div><div class="bloco-titulo">🧪 37 Test Cases Gerados — API Testcase Generator</div></div>
+    <div class="bloco-body">
+      <div class="test-grid">
+        <div class="test-item"><div class="test-cat">Auth</div><div class="test-count">5</div><div class="test-desc">Register, Login, Logout, Credenciais inválidas</div></div>
+        <div class="test-item"><div class="test-cat">Books</div><div class="test-count">9</div><div class="test-desc">Listar, Buscar, Filtrar, Detalhe, Relacionados</div></div>
+        <div class="test-item"><div class="test-cat">Cart</div><div class="test-count">5</div><div class="test-desc">Add, Get, Update, Remove, Sem auth</div></div>
+        <div class="test-item"><div class="test-cat">Checkout</div><div class="test-count">5</div><div class="test-desc">Criar pedido, Cupom, Pagamento, Carrinho vazio</div></div>
+        <div class="test-item"><div class="test-cat">Orders</div><div class="test-count">4</div><div class="test-desc">Histórico, Detalhe, Cancelar 48h, Após 48h</div></div>
+        <div class="test-item"><div class="test-cat">Users + Reviews</div><div class="test-count">9</div><div class="test-desc">Perfil, Gift Points, Endereços, Avaliações</div></div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:#475569;">
+        Arquivo: <code>bookworm/tests/api-test-cases.md</code> · Métodos cobertos:
+        <span class="test-badge">GET ×17</span>
+        <span class="test-badge">POST ×14</span>
+        <span class="test-badge">PUT ×1</span>
+        <span class="test-badge">DELETE ×2</span>
       </div>
     </div>
   </div>
 
-  <footer>BookWorm E-Bookstore · IBM Agentic IDE Demo · Made with IBM Bob</footer>
+  <!-- JOURNEYS -->
+  <div class="bloco">
+    <div class="bloco-header"><div class="bloco-titulo" style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b;">11 Customer Journeys Cobertos</div></div>
+    <div class="bloco-body" style="padding:10px 14px;">
+      <table>
+        <tr><th>#</th><th>Journey Step</th><th>URL</th></tr>
+        <tr><td>1</td><td>Login + User Authentication</td><td>localhost:3000/index.html</td></tr>
+        <tr><td>2</td><td>Order History + Buy Again + Recommendations</td><td>localhost:3000/catalog.html</td></tr>
+        <tr><td>3</td><td>Access Product Catalogue per category</td><td>localhost:3000/catalog.html</td></tr>
+        <tr><td>4</td><td>Select Category of products</td><td>home.html sidebar</td></tr>
+        <tr><td>5</td><td>Browse brands / authors</td><td>catalog.html filtro</td></tr>
+        <tr><td>6</td><td>Select product + Related Reads</td><td>localhost:3000/product.html?id=7</td></tr>
+        <tr><td>7</td><td>Add product(s) to basket</td><td>localhost:3000/checkout.html</td></tr>
+        <tr><td>8</td><td>Select address for delivery</td><td>checkout.html form</td></tr>
+        <tr><td>9</td><td>Payment initiation + Gift Points</td><td>localhost:3000/payment.html</td></tr>
+        <tr><td>10</td><td>Payment confirmation (Credit/Debit/UPI/Wallet)</td><td>payment.html → confirmation</td></tr>
+        <tr><td>11</td><td>Purchase confirmation + Cancel within 48h</td><td>localhost:3000/confirmation.html</td></tr>
+      </table>
+    </div>
+  </div>
 
+  <!-- ENTREGAS -->
+  <div class="bloco">
+    <div class="bloco-header"><div class="bloco-titulo" style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b;">📦 O que foi entregue</div></div>
+    <div class="bloco-body" style="padding:10px 14px;">
+      <div class="entregas">
+        <div class="e-item">8 páginas HTML completas</div>
+        <div class="e-item">19 endpoints REST documentados</div>
+        <div class="e-item">11 tabelas PostgreSQL + seed data</div>
+        <div class="e-item">OpenAPI 3.0 spec (swagger.yaml)</div>
+        <div class="e-item">JWT Authentication + bcrypt</div>
+        <div class="e-item">Docker Compose (3 containers)</div>
+        <div class="e-item">37 test cases (ICA Agent)</div>
+        <div class="e-item">Cancel Order — regra de 48 horas</div>
+        <div class="e-item">Gift Points automáticos por compra</div>
+        <div class="e-item">Cupons de desconto (SAVE100)</div>
+        <div class="e-item">Deploy IBM ROKS (OpenShift YAML)</div>
+        <div class="e-item">GitHub PR #1 aberto</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>BookWorm E-Bookstore · IBM Agentic IDE Demo · Capstone Cloud FullStack · Made with IBM Bob</footer>
 </div>
 </body>
 </html>
